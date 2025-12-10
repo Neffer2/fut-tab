@@ -1,7 +1,11 @@
 // Useful vars
 let width, height, mContext, enabelColition = true, enabelSoundColition = true, minVelocity = 1200, aiSpeed = 700;
 
-let ball, pad1, pad2, limits = [], fullScreen, colitionSound = ['disk-1', 'disk-2'], goalRedAnim, goalBlueAnim, ballResetAnim, scoreTextBlue, scoreTextRed, goalSound, backgroundMusic;
+let ball, pad1, pad2, limits = [], fullScreen, goalRedAnim, goalBlueAnim, ballResetAnim, scoreTextBlue, scoreTextRed, goalSound, backgroundMusic;
+
+// Collision detection for ball reset
+let collisionCount = 0;
+let collisionTimer = 0;
 
 export class Game extends Phaser.Scene {
     constructor ()
@@ -85,6 +89,18 @@ export class Game extends Phaser.Scene {
         }
 
         function newCollision (ball, pad){
+            // Count collisions for anti-spam detection
+            collisionCount++;
+            collisionTimer = mContext.time.now;
+            
+            // Reset ball if too many collisions in short time
+            if (collisionCount >= 100) {
+                ball.setPosition((width/2), (height/2));
+                ball.setVelocity(mContext.getRandomInt(-minVelocity, minVelocity), mContext.getRandomInt(-minVelocity/2, minVelocity/2));
+                collisionCount = 0;
+                return; // Skip normal collision handling
+            }
+
             /* ANIMATION */
             let collide = mContext.physics.add.sprite(ball.x, ball.y, 'collide', 0).setScale(.5);
             collide.anims.play('collide');
@@ -117,7 +133,7 @@ export class Game extends Phaser.Scene {
             if (enabelSoundColition){
                 enabelSoundColition = !enabelSoundColition;
 
-                let sound = mContext.sound.add(colitionSound[mContext.getRandomInt(0, 2)]);
+                let sound = mContext.sound.add('bounce');
                 setTimeout(() => {
                     enabelSoundColition = !enabelSoundColition;
                     sound.play();
@@ -127,6 +143,11 @@ export class Game extends Phaser.Scene {
     } 
 
     update(){
+        // Reset collision counter every 5 seconds
+        if (mContext.time.now - collisionTimer > 5000) {
+            collisionCount = 0;
+        }
+
         if ((ball.body.velocity.y > 0) && ball.body.velocity.y < minVelocity){
             ball.setVelocityY(minVelocity);
         }else if ((ball.body.velocity.y < 0) && (ball.body.velocity.y * -1) < minVelocity){
@@ -149,11 +170,19 @@ export class Game extends Phaser.Scene {
             const dy = targetY - pad2.y;
             const dist = Math.hypot(dx, dy);
 
-            if (dist > 2) {
-                const vx = (dx / dist) * aiSpeed;
-                const vy = (dy / dist) * aiSpeed;
+            // Increased dead zone to prevent vibration
+            const deadZone = 15;
+            
+            if (dist > deadZone) {
+                // Smooth movement with deceleration near target
+                const speedFactor = Math.min(1, dist / 100);
+                const currentSpeed = aiSpeed * speedFactor;
+                
+                const vx = (dx / dist) * currentSpeed;
+                const vy = (dy / dist) * currentSpeed;
                 pad2.setVelocity(vx, vy);
             } else {
+                // Completely stop when within dead zone
                 pad2.setVelocity(0, 0);
             }
 
@@ -162,6 +191,8 @@ export class Game extends Phaser.Scene {
             const clampedY = Phaser.Math.Clamp(pad2.y, r, (height / 2) - r);
             if (clampedX !== pad2.x || clampedY !== pad2.y) {
                 pad2.setPosition(clampedX, clampedY);
+                // Stop movement when hitting bounds to prevent vibration
+                pad2.setVelocity(0, 0);
             }
         }
     }
@@ -169,12 +200,12 @@ export class Game extends Phaser.Scene {
     _init(){
         width = this.game.config.width;
         height = this.game.config.height;
-        this.add.image(width/2, height/2, 'back').setScale(1, 1.02);
+        this.add.image(width/2, height/2, 'field').setScale(1, 1.35);
 
         fullScreen = this.add.image(50, 50, 'fullScreen-on').setScale(.6); 
 
         ball = this.physics.add.sprite((width/2), (height/2), 'ball')
-                .setScale(.70)
+                .setScale(.05)
                 .setName("Ball")
                 .setVelocity(this.getRandomInt(-minVelocity, minVelocity))
                 .setCollideWorldBounds(true)
@@ -182,18 +213,18 @@ export class Game extends Phaser.Scene {
                 .setBounce(1);
 
         pad1 = this.physics.add.sprite((width/2), ((height) - 100), 'blue-pad')
-                .setScale(.8)
+                .setScale(.3)
                 .setName("Pad1")
-                .setCircle(93.5)
+                .setCircle(230)
                 .setImmovable(true)
                 .setInteractive()
                 .setCollideWorldBounds(true);
         pad1.score = 0;
 
-        pad2 = this.physics.add.sprite((width/2), 100, 'red-pad').
-                setScale(.8)
+        pad2 = this.physics.add.sprite((width/2), 100, 'red-pad')
+                .setScale(.3)
                 .setName("Pad2")
-                .setCircle(93.5)
+                .setCircle(230)
                 .setImmovable(true)
                 .setInteractive()
                 .setCollideWorldBounds(true);
@@ -250,9 +281,9 @@ export class Game extends Phaser.Scene {
         goalSound = this.sound.add('goal');
         goalSound.setVolume(0.2);
 
-        // backgroundMusic = this.sound.add('background-music');
-        // backgroundMusic.setVolume(.4);
-        // backgroundMusic.play();
+        backgroundMusic = this.sound.add('background-music');
+        backgroundMusic.setVolume(.3);
+        backgroundMusic.play();
     }
 
     getRandomInt(min = 0, max){
