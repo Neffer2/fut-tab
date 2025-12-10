@@ -200,7 +200,7 @@ export class Game extends Phaser.Scene {
     _init(){
         width = this.game.config.width;
         height = this.game.config.height;
-        this.add.image(width/2, height/2, 'field').setScale(1, 1.35);
+        this.add.image(width/2, height/2, 'field').setScale(.16, .2);
 
         fullScreen = this.add.image(50, 50, 'fullScreen-on').setScale(.6); 
 
@@ -283,6 +283,7 @@ export class Game extends Phaser.Scene {
 
         backgroundMusic = this.sound.add('background-music');
         backgroundMusic.setVolume(.3);
+        backgroundMusic.setLoop(true);
         backgroundMusic.play();
     }
 
