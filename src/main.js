@@ -1,4 +1,5 @@
 import { Boot } from './scenes/boot.js';
+import { Menu } from './scenes/menu.js';
 import { Preloader } from './scenes/preloader.js';
 import { Game } from './scenes/game.js';
 import { GameOver } from './scenes/gameOver.js';
@@ -14,6 +15,7 @@ const config = {
     },
     scene: [
         Boot,
+        Menu,
         Preloader,
         Game,
         GameOver
@@ -21,7 +23,7 @@ const config = {
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true
+            // debug: true
         }
     },
     input :{

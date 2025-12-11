@@ -1,7 +1,7 @@
 // Useful vars
 let width, height, mContext, enabelColition = true, enabelSoundColition = true, minVelocity = 1200, aiSpeed = 700;
 
-let ball, pad1, pad2, limits = [], fullScreen, goalRedAnim, goalBlueAnim, ballResetAnim, scoreTextBlue, scoreTextRed, goalSound, backgroundMusic;
+let ball, pad1, pad2, limits = [], fullScreen, goalRedAnim, goalBlueAnim, ballResetAnim, scoreTextBlue, scoreTextRed, goalSound, backgroundMusic, confettiParticles;
 
 // Collision detection for ball reset
 let collisionCount = 0;
@@ -31,10 +31,15 @@ export class Game extends Phaser.Scene {
             }
         });
 
-        // Drag pads (only player pad)
-        this.input.setDraggable([pad1]);
+        // Drag pads depending on mode
+        const mode = this.registry.get('mode') || 'single';
+        const draggable = [pad1];
+        if (mode === 'two') draggable.push(pad2);
+        this.input.setDraggable(draggable);
         this.input.on('drag', (pointer, obj, dragX, dragY) => {
-            if(obj.name === "Pad1" && dragY > height/2){
+            if (obj.name === 'Pad1' && dragY > height / 2) {
+                obj.setPosition(dragX, dragY);
+            } else if (mode === 'two' && obj.name === 'Pad2' && dragY < height / 2) {
                 obj.setPosition(dragX, dragY);
             }
         });
@@ -154,8 +159,9 @@ export class Game extends Phaser.Scene {
             ball.setVelocity(-minVelocity);
         }
 
-        // Simple AI for pad2 (machine opponent)
-        if (pad2 && pad2.body) {
+        // Simple AI for pad2 (machine opponent) - disabled in two player mode
+        const mode = this.registry.get('mode') || 'single';
+        if (mode !== 'two' && pad2 && pad2.body) {
             const r = pad2.body.halfWidth || 0;
             let targetX = Phaser.Math.Clamp(ball.x, r, width - r);
             let targetY = Math.min(ball.y, (height / 2) - r);
@@ -282,9 +288,12 @@ export class Game extends Phaser.Scene {
         goalSound.setVolume(0.2);
 
         backgroundMusic = this.sound.add('background-music');
-        backgroundMusic.setVolume(.3);
+        backgroundMusic.setVolume(.1);
         backgroundMusic.setLoop(true);
         backgroundMusic.play();
+
+        // Particles for confetti (reuse ball texture as small pieces)
+        confettiParticles = this.add.particles('ball');
     }
 
     getRandomInt(min = 0, max){
