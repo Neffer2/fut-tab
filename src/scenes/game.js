@@ -72,7 +72,9 @@ export class Game extends Phaser.Scene {
                 });
 
                 pad1.score++;
-                if (pad1.score > 9){mContext.scene.restart();}
+                if (pad1.score > 2){
+                    mContext.scene.start('GameOver');
+                }
                 scoreTextBlue.setText(pad1.score);
             }else if (limit.name === 'Player2'){
                 goalBlueAnim.setAlpha(1);
@@ -82,7 +84,9 @@ export class Game extends Phaser.Scene {
                 });
 
                 pad2.score++;
-                if (pad2.score > 9){mContext.scene.restart();}
+                if (pad2.score > 2){
+                    mContext.scene.start('GameOver');
+                }
                 scoreTextRed.setText(pad2.score);
             }
 
