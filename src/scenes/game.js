@@ -210,31 +210,28 @@ export class Game extends Phaser.Scene {
     _init(){
         width = this.game.config.width;
         height = this.game.config.height;
-        this.add.image(width/2, height/2, 'field').setScale(.16, .2);
+        this.add.image(width/2, height/2, 'field');
 
-        fullScreen = this.add.image(50, 50, 'fullScreen-on').setScale(.6); 
+        fullScreen = this.add.image(50, 50, 'fullScreen-on'); 
 
         ball = this.physics.add.sprite((width/2), (height/2), 'ball')
-                .setScale(.05)
                 .setName("Ball")
                 .setVelocity(this.getRandomInt(-minVelocity, minVelocity))
                 .setCollideWorldBounds(true)
-                .setCircle(76)
+                .setCircle(40)
                 .setBounce(1);
 
         pad1 = this.physics.add.sprite((width/2), ((height) - 100), 'blue-pad')
-                .setScale(.3)
                 .setName("Pad1")
-                .setCircle(230)
+                .setCircle(70)
                 .setImmovable(true)
                 .setInteractive()
                 .setCollideWorldBounds(true);
         pad1.score = 0;
 
         pad2 = this.physics.add.sprite((width/2), 100, 'red-pad')
-                .setScale(.3)
                 .setName("Pad2")
-                .setCircle(230)
+                .setCircle(70)
                 .setImmovable(true)
                 .setInteractive()
                 .setCollideWorldBounds(true);

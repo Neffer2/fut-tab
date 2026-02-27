@@ -7,29 +7,27 @@ export class Menu extends Phaser.Scene {
         const width = this.game.config.width;
         const height = this.game.config.height;
 
+        this.add.image(width / 2, height / 2, 'menu-back')
+            .setDisplaySize(width, height)
+            .setOrigin(0.5);
+
         // Title
-        this.add.text(width / 2, 200, 'Fut-Tab', { font: '64px neon', color: '#ffffff' }).setOrigin(0.5);
+        this.add.image(width / 2, height / 2 - 195, 'title').setOrigin(0.5);
 
         // Single Player Button
-        const singleBtn = this.add.text(width / 2, height / 2 - 60, 'Juego Individual', {
-            font: '48px neon',
-            color: '#4deeea',
-            backgroundColor: '#00000040',
-            padding: { left: 20, right: 20, top: 10, bottom: 10 }
-        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+        const singleBtn = this.add.image(width / 2, height / 2 + 70, 'single-player')
+            .setOrigin(0.5)
+            .setInteractive({ useHandCursor: true });
 
         // Two Players Button
-        const twoBtn = this.add.text(width / 2, height / 2 + 60, 'Dos Jugadores', {
-            font: '48px neon',
-            color: '#ff6ac1',
-            backgroundColor: '#00000040',
-            padding: { left: 20, right: 20, top: 10, bottom: 10 }
-        }).setOrigin(0.5).setInteractive({ useHandCursor: true });
+        const twoBtn = this.add.image(width / 2, height / 2 + 240, 'two-players')
+            .setOrigin(0.5)
+            .setInteractive({ useHandCursor: true });
 
-        singleBtn.on('pointerover', () => singleBtn.setStyle({ backgroundColor: '#00000080' }));
-        singleBtn.on('pointerout', () => singleBtn.setStyle({ backgroundColor: '#00000040' }));
-        twoBtn.on('pointerover', () => twoBtn.setStyle({ backgroundColor: '#00000080' }));
-        twoBtn.on('pointerout', () => twoBtn.setStyle({ backgroundColor: '#00000040' }));
+        singleBtn.on('pointerover', () => singleBtn.setScale(1.03));
+        singleBtn.on('pointerout', () => singleBtn.setScale(1));
+        twoBtn.on('pointerover', () => twoBtn.setScale(1.03));
+        twoBtn.on('pointerout', () => twoBtn.setScale(1));
 
         singleBtn.on('pointerdown', () => {
             this.registry.set('mode', 'single');
