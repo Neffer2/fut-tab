@@ -18,8 +18,6 @@ export class Preloader extends Phaser.Scene {
     preload ()
     {
         this.load.setPath('public/assets');
-
-        this.load.image('logo', 'iglu.png');
         this.load.image('loading.png', 'loading.png');
         this.load.image('ball', 'ball.png');        
         this.load.image('field', 'field.jpeg');        
@@ -32,7 +30,6 @@ export class Preloader extends Phaser.Scene {
         
         this.load.image('single-player', 'single.png');    
         this.load.image('two-players', 'two.png');    
-        this.load.image('init-back', 'init-back.png');    
         this.load.image('menu-back', 'menu-back.jpeg');    
         this.load.image('gover-back', 'gover-back.jpeg');    
         this.load.audio('bounce', 'sounds/bounce.mp3');
