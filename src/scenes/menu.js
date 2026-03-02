@@ -12,7 +12,7 @@ export class Menu extends Phaser.Scene {
             .setOrigin(0.5);
 
         // Title
-        this.add.image(width / 2, height / 2 - 195, 'title').setOrigin(0.5);
+        this.add.image(width / 2, height / 2 - 225, 'title').setOrigin(0.5);
 
         // Single Player Button
         const singleBtn = this.add.image(width / 2, height / 2 + 70, 'single-player')
@@ -20,7 +20,7 @@ export class Menu extends Phaser.Scene {
             .setInteractive({ useHandCursor: true });
 
         // Two Players Button
-        const twoBtn = this.add.image(width / 2, height / 2 + 240, 'two-players')
+        const twoBtn = this.add.image(width / 2, height / 2 + 260, 'two-players')
             .setOrigin(0.5)
             .setInteractive({ useHandCursor: true });
 

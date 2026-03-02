@@ -8,12 +8,12 @@ export class GameOver extends Phaser.Scene {
     {
         let width = this.game.config.width;
         let height = this.game.config.height;
+        this.add.image(width / 2, height / 2, 'gover-back')
+            .setDisplaySize(width, height)
+            .setOrigin(0.5);
 
-        this.add.text((width / 2), (height / 2), 'Game Over', {
-            fontFamily: 'Arial Black', fontSize: 64, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5);
+
+        this.add.image(width / 2, height / 2, 'game-over-title').setOrigin(0.5);
 
         this.input.once('pointerdown', () => {
             setTimeout(() => {
